@@ -42,29 +42,32 @@ class CountdownThread(QThread):
 class LotteryApp(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("INOVEL İSİM ÇEKİLİŞ UYGULAMASI")
+        self.setWindowTitle("İNOVEL İSİM ÇEKİLİŞ UYGULAMASI")
         self.setGeometry(100, 100, 1920, 1080)
         
         # Ana widget ve layout
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
         self.main_layout = QVBoxLayout(self.central_widget)
+        self.main_layout.setSpacing(20)
+        self.main_layout.setContentsMargins(20, 20, 20, 20)
         
         # Arkaplan ayarla
-        self.setup_background("lotterybg.png", opacity=0.3)  # Opaklık %30'a düşürüldü
+        self.setup_background("lotterybg.png", opacity=0.4)
         
         # Modern stil ayarla
         self.setup_style()
         
-        # Başlık bölümü (her ekranda gösterilecek)
+        # Başlık bölümü
         self.create_header()
         
         # Ana içerik bölümü
         self.content_widget = QWidget()
         self.content_layout = QVBoxLayout(self.content_widget)
-        self.main_layout.addWidget(self.content_widget)
+        self.content_layout.setSpacing(15)
+        self.main_layout.addWidget(self.content_widget, stretch=1)
         
-        # Footer bölümü (her ekranda gösterilecek)
+        # Footer bölümü
         self.create_footer()
         
         # Ekranı yükle
@@ -75,102 +78,143 @@ class LotteryApp(QMainWindow):
             self.open_draw_screen()
     
     def create_header(self):
-        # Başlık container
         header_frame = QFrame()
-        header_frame.setMaximumHeight(80)
-        header_layout = QVBoxLayout(header_frame)
-        header_layout.setContentsMargins(10, 10, 10, 10)
+        header_frame.setMaximumHeight(100)
+        header_layout = QHBoxLayout(header_frame)
+        header_layout.setContentsMargins(20, 10, 20, 10)
+        header_layout.setSpacing(20)
+        
+        # İnovel logosu (solda)
+        inovel_logo_label = QLabel()
+        inovel_pixmap = QPixmap("inovellogo.png")
+        if not inovel_pixmap.isNull():
+            inovel_pixmap = inovel_pixmap.scaled(80, 80, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            inovel_logo_label.setPixmap(inovel_pixmap)
+        else:
+            logging.error("Inovel logo not found: inovellogo")
+            inovel_logo_label.setText("Logo Yok")
+        inovel_logo_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        header_layout.addWidget(inovel_logo_label)
         
         # Başlık
-        title_label = QLabel("INOVEL İSİM ÇEKİLİŞ UYGULAMASI")
-        title_label.setFont(QFont("Arial", 20, QFont.Bold))
+        title_label = QLabel("İNOVEL ÇEKİLİŞ UYGULAMASI")
+        title_label.setFont(QFont("Segoe UI", 24, QFont.Bold))
         title_label.setAlignment(Qt.AlignCenter)
-        title_label.setStyleSheet("color: #fd0700;")  # Turuncu renk
-        header_layout.addWidget(title_label)
+        title_label.setStyleSheet("color: #FFFFFF; background: transparent;")
+        header_layout.addWidget(title_label, stretch=1)
+        
+        # DPU logosu (sağda)
+        dpu_logo_label = QLabel()
+        dpu_pixmap = QPixmap("dpulogo.png")
+        if not dpu_pixmap.isNull():
+            dpu_pixmap = dpu_pixmap.scaled(80, 80, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            dpu_logo_label.setPixmap(dpu_pixmap)
+        else:
+            logging.error("DPU logo not found: dpulogo")
+            dpu_logo_label.setText("Logo Yok")
+        dpu_logo_label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        header_layout.addWidget(dpu_logo_label)
         
         self.main_layout.addWidget(header_frame)
     
     def create_footer(self):
-        # Alt bilgi container
         footer_frame = QFrame()
-        footer_frame.setMaximumHeight(30)
+        footer_frame.setMaximumHeight(50)
         footer_layout = QHBoxLayout(footer_frame)
-        footer_layout.setContentsMargins(10, 0, 10, 10)
+        footer_layout.setContentsMargins(20, 10, 20, 10)
         
-        # Boşluk ekle
         footer_layout.addStretch()
         
-        # Alt bilgi yazısı
-        footer_label = QLabel("made by gkhkaya")
+        footer_label = QLabel("Made by gkhkaya")
         footer_label.setAlignment(Qt.AlignRight)
-        footer_label.setStyleSheet("color: #fd0700; font-style: italic;")  # Turuncu renk
+        footer_label.setStyleSheet("color: #BBBBBB; font-style: italic; font-size: 14px;")
         footer_layout.addWidget(footer_label)
         
         self.main_layout.addWidget(footer_frame)
     
     def setup_style(self):
-        # Siyah, gri ve turuncu tema stil ayarları
         self.setStyleSheet("""
             QMainWindow, QWidget {
                 background-color: transparent;
-                color: #FFFFFF;
             }
             QLabel {
                 color: #FFFFFF;
+                font-family: 'Segoe UI';
             }
             QPushButton {
-                background-color: #fd0700;  /* Turuncu */
-                color: black;
-                border-radius: 5px;
-                padding: 8px 15px;
+                background-color: #FF0000; /* Kırmızı */
+                color: #FFFFFF;
+                border-radius: 10px;
+                padding: 12px 20px;
+                font-size: 16px;
                 font-weight: bold;
+                border: none;
+                transition: all 0.3s;
             }
             QPushButton:hover {
-                background-color: #fd0700;  /* Açık turuncu */
+                background-color: #FF3333; /* Daha açık kırmızı */
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             }
             QPushButton:pressed {
-                background-color: #fd0700;  /* Koyu turuncu */
+                background-color: #CC0000; /* Daha koyu kırmızı */
+                box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
             }
             QLineEdit, QSpinBox, QTextEdit {
-                background-color: rgba(50, 50, 50, 180);  /* Koyu gri */
-                color: white;
-                border: 1px solid #444444;
-                border-radius: 5px;
-                padding: 8px;
+                background-color: rgba(40, 40, 40, 0.9);
+                color: #FFFFFF;
+                border: 1px solid #555555;
+                border-radius: 8px;
+                padding: 10px;
+                font-size: 14px;
             }
             QFrame {
-                background-color: rgba(30, 30, 30, 180);  /* Siyah */
-                border-radius: 8px;
+                background-color: rgba(30, 30, 30, 0.95);
+                border-radius: 12px;
             }
             QScrollArea {
                 border: none;
+                background: transparent;
             }
             QCheckBox {
-                color: white;
-                spacing: 5px;
+                color: #FFFFFF;
+                font-size: 14px;
+                spacing: 8px;
             }
             QCheckBox::indicator {
-                width: 15px;
-                height: 15px;
+                width: 18px;
+                height: 18px;
+                border: 1px solid #555555;
+                border-radius: 4px;
+            }
+            QSpinBox::up-button, QSpinBox::down-button {
+                background-color: #FF0000; /* Kırmızı */
+                border-radius: 4px;
+            }
+            QSpinBox::up-button:hover, QSpinBox::down-button:hover {
+                background-color: #FF3333; /* Daha açık kırmızı */
             }
         """)
     
-    def setup_background(self, image_path, opacity=0.3):
+    def setup_background(self, image_path, opacity=0.4):
         try:
             if not os.path.exists(image_path):
                 logging.error(f"Background image not found: {image_path}")
-                # Eğer dosya bulunamazsa, varsayılan arka plan rengi ayarla
-                self.setStyleSheet("background-color: #121212;")  # Koyu siyah
+                # Varsayılan gradyan arka plan
+                self.setStyleSheet("""
+                    QMainWindow {
+                        background: qlineargradient(
+                            x1:0, y1:0, x2:1, y2:1,
+                            stop:0 #1E1E2E, stop:1 #2E2E4E
+                        );
+                    }
+                """)
                 return
             
-            # Arka plan görüntüsü yükle
             background_image = QImage(image_path)
-            
-            # Opaklık ayarla - Görüntüyü daha saydam yap
             for y in range(background_image.height()):
                 for x in range(background_image.width()):
                     color = QColor(background_image.pixelColor(x, y))
-                    color.setAlpha(int(255 * opacity))  # %30 opaklık
+                    color.setAlpha(int(255 * opacity))
                     background_image.setPixelColor(x, y, color)
             
             pixmap = QPixmap.fromImage(background_image)
@@ -185,8 +229,14 @@ class LotteryApp(QMainWindow):
             logging.debug(f"Background loaded successfully: {image_path}")
         except Exception as e:
             logging.error(f"Background loading error: {str(e)}")
-            # Hata durumunda varsayılan arka plan rengi ayarla
-            self.setStyleSheet("background-color: #121212;")  # Koyu siyah
+            self.setStyleSheet("""
+                QMainWindow {
+                    background: qlineargradient(
+                        x1:0, y1:0, x2:1, y2:1,
+                        stop:0 #1E1E2E, stop:1 #2E2E4E
+                    );
+                }
+            """)
     
     def open_choose_screen(self):
         self.clear_content()
@@ -197,7 +247,6 @@ class LotteryApp(QMainWindow):
         self.draw_screen = ModernDrawScreen(self.content_layout, self.open_choose_screen)
     
     def clear_content(self):
-        # Content layout'u temizle
         while self.content_layout.count():
             item = self.content_layout.takeAt(0)
             widget = item.widget()
@@ -205,7 +254,6 @@ class LotteryApp(QMainWindow):
                 widget.deleteLater()
     
     def clear_window(self):
-        # Tüm layout'u temizle - Başlık ve footer dahil
         while self.main_layout.count():
             item = self.main_layout.takeAt(0)
             widget = item.widget()
@@ -221,109 +269,110 @@ class ModernChooseScreen:
         self.create_widgets()
     
     def create_widgets(self):
-        # Başlık container
         title_frame = QFrame()
-        title_frame.setMaximumHeight(60)  # Daha küçük başlık alanı
+        title_frame.setMaximumHeight(80)
         title_layout = QVBoxLayout(title_frame)
-        title_layout.setContentsMargins(5, 5, 5, 5)  # Marginleri azalt
+        title_layout.setContentsMargins(10, 10, 10, 10)
         
-        # Başlık
         title_label = QLabel("ÇEKİLİŞ LİSTESİ")
-        title_label.setFont(QFont("Arial", 16, QFont.Bold))
+        title_label.setFont(QFont("Segoe UI", 20, QFont.Bold))
         title_label.setAlignment(Qt.AlignCenter)
-        title_label.setStyleSheet("color: #fd0700;")  # Turuncu renk
+        title_label.setStyleSheet("color: #FFFFFF; background: transparent;")
         title_layout.addWidget(title_label)
         
         self.layout.addWidget(title_frame)
         
-        # Ana container
         main_frame = QFrame()
         main_layout = QVBoxLayout(main_frame)
-        main_layout.setSpacing(10)  # Boşlukları azalt
+        main_layout.setSpacing(15)
+        main_layout.setContentsMargins(20, 20, 20, 20)
         
-        # Çekiliş girdileri için scroll area
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
         scroll_widget = QWidget()
         self.entries_layout = QVBoxLayout(scroll_widget)
-        self.entries_layout.setSpacing(5)  # Başlıklar arasındaki mesafeyi azalt
-        self.entries_layout.setContentsMargins(5, 5, 5, 5)  # Marginleri azalt
+        self.entries_layout.setSpacing(10)
+        self.entries_layout.setContentsMargins(10, 10, 10, 10)
         scroll_area.setWidget(scroll_widget)
-        main_layout.addWidget(scroll_area)
+        main_layout.addWidget(scroll_area, stretch=1)
         
-        # Başlangıç çekiliş satırları
         for _ in range(3):
             self.add_lottery_entry()
         
-        # Butonlar için bir konteyner
         buttons_layout = QVBoxLayout()
-        buttons_layout.setSpacing(10)  # Boşlukları azalt
+        buttons_layout.setSpacing(15)
         
-        # Yeni satır ekle butonu
         add_button = QPushButton("Yeni Çekiliş Satırı Ekle")
+        add_button.setIcon(QIcon.fromTheme("list-add"))
         add_button.clicked.connect(self.add_lottery_entry)
         buttons_layout.addWidget(add_button)
         
-        # İsim listesi container
         names_frame = QFrame()
         names_layout = QVBoxLayout(names_frame)
-        names_layout.setSpacing(5)  # Boşlukları azalt
-        names_layout.setContentsMargins(10, 10, 10, 10)  # Marginleri azalt
+        names_layout.setSpacing(10)
+        names_layout.setContentsMargins(15, 15, 15, 15)
         
-        names_label = QLabel("İsim Listesi (Excel'den yapıştırın - her isim yeni satırda)")
-        names_label.setFont(QFont("Arial", 10, QFont.Bold))
-        names_label.setStyleSheet("color: #FF7F00;")  # Turuncu renk
+        names_label = QLabel("İsim Listesi")
+        names_label.setFont(QFont("Segoe UI", 12, QFont.Bold))
+        names_label.setStyleSheet("color: #FFFFFF;")
         names_layout.addWidget(names_label)
         
         self.name_entry = QTextEdit()
-        self.name_entry.setMinimumHeight(200)  # Daha fazla isim girebilmek için yükseklik artırıldı
-        names_layout.addWidget(self.name_entry)
+        self.name_entry.setMinimumHeight(250)
+        names_layout.addWidget(self.name_entry, stretch=1)
         
-        # Örnek veri ekleme butonu
         sample_data_button = QPushButton("Örnek Veri Ekle")
+        sample_data_button.setIcon(QIcon.fromTheme("document-new"))
         sample_data_button.clicked.connect(self.add_sample_data)
         names_layout.addWidget(sample_data_button)
         
         buttons_layout.addWidget(names_frame)
         
-        # Kaydet butonu
         save_button = QPushButton("Kaydet ve Çekilişe Başla")
+        save_button.setIcon(QIcon.fromTheme("document-save"))
         save_button.clicked.connect(self.save_and_exit)
         buttons_layout.addWidget(save_button)
         
         main_layout.addLayout(buttons_layout)
         
-        self.layout.addWidget(main_frame)
+        self.layout.addWidget(main_frame, stretch=2)
     
     def add_lottery_entry(self):
         frame = QFrame()
         layout = QHBoxLayout(frame)
-        layout.setContentsMargins(5, 5, 5, 5)  # Marginleri azalt
-        layout.setSpacing(5)  # İçerideki boşlukları azalt
+        layout.setContentsMargins(10, 10, 10, 10)
+        layout.setSpacing(10)
         
         title_entry = QLineEdit()
         title_entry.setText("Çekiliş Başlığı")
-        layout.addWidget(title_entry)
+        title_entry.setPlaceholderText("Çekiliş başlığını girin")
+        layout.addWidget(title_entry, stretch=3)
         
         main_count = QSpinBox()
         main_count.setMinimum(1)
         main_count.setMaximum(100)
         main_count.setValue(3)
-        layout.addWidget(main_count)
+        layout.addWidget(main_count, stretch=1)
         
         main_label = QLabel("Ana")
-        main_label.setStyleSheet("color: #fd0700;")  # Turuncu renk
+        main_label.setStyleSheet("color: #FFFFFF; font-size: 14px;")
         layout.addWidget(main_label)
         
         backup_count = QSpinBox()
         backup_count.setMinimum(0)
         backup_count.setMaximum(100)
         backup_count.setValue(2)
-        layout.addWidget(backup_count)
+        layout.addWidget(backup_count, stretch=1)
         
         backup_label = QLabel("Yedek")
-        backup_label.setStyleSheet("color: #fd0700;")  # Turuncu renk
+        backup_label.setStyleSheet("color: #FFFFFF; font-size: 14px;")
         layout.addWidget(backup_label)
+        
+        delete_button = QPushButton("Sil")
+        delete_button.setIcon(QIcon.fromTheme("edit-delete"))
+        delete_button.setFixedWidth(80)
+        delete_button.clicked.connect(lambda: self.delete_lottery_entry(frame, title_entry, main_count, backup_count))
+        layout.addWidget(delete_button)
         
         self.entries_layout.addWidget(frame)
         
@@ -334,8 +383,21 @@ class ModernChooseScreen:
             'backup_count': backup_count
         })
     
+    def delete_lottery_entry(self, frame, title_entry, main_count, backup_count):
+        if len(self.lotteries) <= 1:
+            QMessageBox.warning(None, "Uyarı", "En az bir çekiliş satırı kalmalı!")
+            return
+        
+        for item in self.lotteries:
+            if item['frame'] == frame:
+                self.lotteries.remove(item)
+                break
+        
+        frame.deleteLater()
+        self.entries_layout.removeWidget(frame)
+        logging.debug("Lottery entry deleted successfully")
+    
     def add_sample_data(self):
-        # Excel'den kopyalanmış gibi örnek isim listesi
         sample_names = """Ahmet Yılmaz
 Mehmet Kaya
 Ayşe Demir
@@ -392,48 +454,40 @@ Murat Çetin"""
             QMessageBox.critical(None, "Hata", f"JSON kaydedilirken hata oluştu: {str(e)}")
     
     def parse_names(self, text):
-        # Her satırı ayrı bir isim olarak işle
         names = []
         lines = text.strip().split('\n')
         for line in lines:
             name = line.strip()
-            if name:  # Boş satırları atlayarak isimleri listeye ekle
+            if name:
                 names.append(name)
         
-        # Tekrar eden isimleri kontrol et
         unique_names = []
         duplicate_names = []
         for name in names:
             if name not in unique_names:
                 unique_names.append(name)
             else:
-                if name not in duplicate_names:
-                    duplicate_names.append(name)
+                duplicate_names.append(name)
         
         if duplicate_names:
-            message = f"Dikkat: {len(duplicate_names)} tekrar eden isim bulundu:\n"
+            message = f"Dikkat: {len(duplicate_names)} tekrar eden isim bulundu ve listeden çıkarıldı:\n"
             message += ", ".join(duplicate_names[:5])
             if len(duplicate_names) > 5:
                 message += f" ve {len(duplicate_names)-5} isim daha."
-            message += "\n\nBu isimler listede birden fazla yer alacak."
-            QMessageBox.warning(None, "Tekrar Eden İsimler", message)
-        
-        return names if names else None
+            QMessageBox.information(None, "Tekrar Eden İsimler Kaldırıldı", message)
+    
+        return unique_names if unique_names else None
 
 
 class ModernDrawScreen:
     def __init__(self, layout, on_reset):
         self.layout = layout
-        self.on_reset = on_reset  # Çekiliş sıfırlandığında çağrılacak fonksiyon
+        self.on_reset = on_reset
         self.load_data()
         self.create_widgets()
         self.current_index = 0
-        
-        # Her çekiliş için kazananları saklayacak sözlük
         self.winners_history = {}
-        
         self.update_draw_info()
-        
         self.countdown_thread = None
     
     def load_data(self):
@@ -451,91 +505,87 @@ class ModernDrawScreen:
             raise
     
     def create_widgets(self):
-        # Ana container
         main_frame = QFrame()
         main_layout = QVBoxLayout(main_frame)
-        main_layout.setSpacing(10)  # Boşlukları azalt
+        main_layout.setSpacing(20)
+        main_layout.setContentsMargins(20, 20, 20, 20)
         
-        # Kalan katılımcı sayısı
         self.remaining_label = QLabel()
-        self.remaining_label.setFont(QFont("Arial", 12))
+        self.remaining_label.setFont(QFont("Segoe UI", 14))
         self.remaining_label.setAlignment(Qt.AlignCenter)
-        self.remaining_label.setStyleSheet("color: #FFFFFF;")
+        self.remaining_label.setStyleSheet("color: #BBBBBB; background: transparent;")
         main_layout.addWidget(self.remaining_label)
         
-        # Başlık
         self.title_label = QLabel()
-        self.title_label.setFont(QFont("Arial", 18, QFont.Bold))
+        self.title_label.setFont(QFont("Segoe UI", 22, QFont.Bold))
         self.title_label.setAlignment(Qt.AlignCenter)
-        self.title_label.setStyleSheet("color: #fd0700;")  # Turuncu renk
+        self.title_label.setStyleSheet("color: #FFFFFF; background: transparent;")
         main_layout.addWidget(self.title_label)
         
-        # Çekiliş başlat butonu
         self.start_button = QPushButton("ÇEKİLİŞİ BAŞLAT")
-        self.start_button.setMinimumHeight(50)
+        self.start_button.setIcon(QIcon.fromTheme("media-playback-start"))
+        self.start_button.setMinimumHeight(60)
         self.start_button.clicked.connect(self.start_draw)
         main_layout.addWidget(self.start_button)
         
-        # Sayaç etiketi
         self.countdown_label = QLabel()
-        self.countdown_label.setFont(QFont("Arial", 60, QFont.Bold))
+        self.countdown_label.setFont(QFont("Segoe UI", 72, QFont.Bold))
         self.countdown_label.setAlignment(Qt.AlignCenter)
-        self.countdown_label.setStyleSheet("color: #fd0700;")  # Turuncu renk
-        self.countdown_label.setMinimumHeight(120)  # Yüksekliği biraz azalt
+        self.countdown_label.setStyleSheet("color: #FFFFFF; background: transparent;")
+        self.countdown_label.setMinimumHeight(100)
         main_layout.addWidget(self.countdown_label)
         
-        # Sonuç container
         result_frame = QFrame()
         result_layout = QVBoxLayout(result_frame)
-        result_layout.setContentsMargins(10, 10, 10, 10)  # Marginleri azalt
+        result_layout.setContentsMargins(15, 15, 15, 15)
         
-        # Sonuç etiketi
         self.result_label = QLabel()
-        self.result_label.setFont(QFont("Arial", 16))
+        self.result_label.setFont(QFont("Segoe UI", 16))
         self.result_label.setAlignment(Qt.AlignCenter)
-        self.result_label.setWordWrap(True)  # Uzun isim listeleri için satır kırılımını etkinleştir
+        self.result_label.setWordWrap(True)
+        self.result_label.setStyleSheet("color: #FFFFFF; background: transparent;")
         result_layout.addWidget(self.result_label)
         
-        main_layout.addWidget(result_frame)
+        main_layout.addWidget(result_frame, stretch=1)
         
-        # Butonlar için yatay layout
         button_layout = QHBoxLayout()
-        button_layout.setSpacing(10)  # Boşlukları azalt
+        button_layout.setSpacing(15)
         
         self.only_main_button = QPushButton("Ana Talihlileri Çıkar ve Diğerine Geç")
+        self.only_main_button.setIcon(QIcon.fromTheme("go-next"))
         self.only_main_button.clicked.connect(self.remove_main_and_next)
         self.only_main_button.setEnabled(False)
         button_layout.addWidget(self.only_main_button)
         
-        self.all_button = QPushButton("Ana + Yedek TalihlTGileri Çıkar ve Diğerine Geç")
+        self.all_button = QPushButton("Ana + Yedek Talihlileri Çıkar ve Diğerine Geç")
+        self.all_button.setIcon(QIcon.fromTheme("go-next"))
         self.all_button.clicked.connect(self.remove_all_and_next)
         self.all_button.setEnabled(False)
         button_layout.addWidget(self.all_button)
         
         main_layout.addLayout(button_layout)
         
-        # İsim çıkarma butonu
         self.remove_name_button = QPushButton("BELİRLİ İSMİ LİSTEDEN ÇIKAR")
+        self.remove_name_button.setIcon(QIcon.fromTheme("edit-delete"))
         self.remove_name_button.clicked.connect(self.remove_specific_name)
         main_layout.addWidget(self.remove_name_button)
         
-        # Alt butonlar için yatay layout
         bottom_button_layout = QHBoxLayout()
-        bottom_button_layout.setSpacing(10)
+        bottom_button_layout.setSpacing(15)
         
-        # İsim listesini göster butonu
         self.show_names_button = QPushButton("KATILIMCI LİSTESİNİ GÖSTER")
+        self.show_names_button.setIcon(QIcon.fromTheme("view-list"))
         self.show_names_button.clicked.connect(self.show_names)
         bottom_button_layout.addWidget(self.show_names_button)
         
-        # Geri dön butonu
         self.back_button = QPushButton("ÖNCEKİ ÇEKİLİŞE DÖN")
+        self.back_button.setIcon(QIcon.fromTheme("go-previous"))
         self.back_button.clicked.connect(self.go_back)
         self.back_button.setEnabled(False)
         bottom_button_layout.addWidget(self.back_button)
         
-        # Çekilişi sıfırla butonu
         self.reset_button = QPushButton("ÇEKİLİŞİ SIFIRLA")
+        self.reset_button.setIcon(QIcon.fromTheme("view-refresh"))
         self.reset_button.clicked.connect(self.reset_lottery)
         bottom_button_layout.addWidget(self.reset_button)
         
@@ -566,15 +616,14 @@ class ModernDrawScreen:
         draw = self.draws[self.current_index]
         self.title_label.setText(draw["title"])
         
-        # Eğer bu çekiliş daha önce yapıldıysa sonuçları göster
         if self.current_index in self.winners_history:
             winners = self.winners_history[self.current_index]
             
-            result_text = "<b>Ana Talihliler:</b><br>" + "<br>".join(winners['main'])
-            
+            # Ana talihlileri yan yana göster
+            result_text = "<b>Ana Talihliler:</b> " + " - ".join(winners['main'])            
+            # Yedek talihliler varsa, onları da yan yana göster
             if winners['backup']:
-                result_text += "<br><br><b>Yedek Talihliler:</b><br>" + "<br>".join(winners['backup'])
-            
+                result_text += "<br><br><b>Yedek Talihliler:</b> " + " - ".join(winners['backup'])            
             self.result_label.setText(result_text)
             self.main_winners = winners['main']
             self.backup_winners = winners['backup']
@@ -602,7 +651,6 @@ class ModernDrawScreen:
         
         self.start_button.setEnabled(False)
         
-        # Sayaç için thread başlat
         self.countdown_thread = CountdownThread()
         self.countdown_thread.signal.connect(self.update_countdown)
         self.countdown_thread.finished.connect(self.perform_draw)
@@ -619,16 +667,16 @@ class ModernDrawScreen:
         self.main_winners = selected_names[:draw["main_count"]]
         self.backup_winners = selected_names[draw["main_count"]:]
         
-        # Çekiliş sonuçlarını geçmişe kaydet
         self.winners_history[self.current_index] = {
             'main': self.main_winners.copy(),
             'backup': self.backup_winners.copy()
         }
         
-        result_text = "<b>Ana Talihliler:</b><br>" + "<br>".join(self.main_winners)
-        
+        # Ana talihlileri yan yana, - ayrılmış şekilde göster
+        result_text = "<b>Ana Talihliler:</b> " + " - ".join(self.main_winners)        
+        # Yedek talihliler varsa, onları da yan yana göster
         if self.backup_winners:
-            result_text += "<br><br><b>Yedek Talihliler:</b><br>" + "<br>".join(self.backup_winners)
+            result_text += "<br><br><b>Yedek Talihliler:</b> " + " - ".join(self.backup_winners)
         
         self.countdown_label.setText("")
         self.result_label.setText(result_text)
@@ -640,28 +688,23 @@ class ModernDrawScreen:
         self.start_button.setEnabled(True)
     
     def remove_main_and_next(self):
-        # Mevcut çekilişte çıkan ana talihlileri çıkar
         for name in self.main_winners:
-            if name in self.names:  # Güvenlik kontrolü
+            if name in self.names:
                 self.names.remove(name)
         
-        # Sonraki çekilişe geç
         self.current_index += 1
         self.update_draw_info()
     
     def remove_all_and_next(self):
-        # Mevcut çekilişte çıkan tüm talihlileri çıkar
         for name in self.main_winners + self.backup_winners:
-            if name in self.names:  # Güvenlik kontrolü
+            if name in self.names:
                 self.names.remove(name)
         
-        # Sonraki çekilişe geç
         self.current_index += 1
         self.update_draw_info()
     
     def go_back(self):
         if self.current_index > 0:
-            # Önceki çekilişe döndüğümüzde tüm UI elemanlarını ve bilgileri sıfırla
             self.current_index -= 1
             self.countdown_label.setText("")
             self.result_label.setText("")
@@ -676,7 +719,6 @@ class ModernDrawScreen:
         names_dialog = QMessageBox()
         names_dialog.setWindowTitle("Katılımcı Listesi")
         
-        # İsimleri daha okunabilir formatta göster (her satırda en fazla 3 isim)
         names_text = ""
         for i, name in enumerate(self.names):
             names_text += name
@@ -710,7 +752,6 @@ class ModernDrawScreen:
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     
-    # Çekiliş uygulaması
     window = LotteryApp()
     
     window.show()
